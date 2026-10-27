@@ -1,0 +1,57 @@
+#include <TouchScreen.h>
+
+#define YP A3
+#define XM A2
+#define YM 9
+#define XP 8
+
+#define TS_MINX 150
+#define TS_MAXX 920
+#define TS_MINY 120
+#define TS_MAXY 940
+
+TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
+
+int x, y;
+
+void setup() {
+  pinMode(3, OUTPUT);
+}
+
+void switchOn() {
+  digitalWrite(3, HIGH);
+  delay(200);
+}
+
+void switchOff() {
+  digitalWrite(3, LOW);
+  delay(200);
+}
+
+void setBrightness() {
+  int bright = map(x, TS_MINX, TS_MAXX, 0, 255);
+  bright = constrain(bright, 0, 255);
+  analogWrite(3, bright);
+}
+
+void loop() {
+  TSPoint p = ts.getPoint();
+
+  pinMode(XM, OUTPUT);
+  pinMode(YP, OUTPUT);
+
+  if (p.z > 10 && p.z < 1000) {
+    x = p.x;
+    y = p.y;
+
+    if (x <= 500 && x >= 100 && y >= 150 && y < 375) {
+      switchOn();
+    }
+    if (x > 500 && x <= 900 && y >= 150 && y < 375) {
+      switchOff();
+    }
+    if (y >= 375 && y <= 900) {
+      setBrightness();
+    }
+  }
+}
